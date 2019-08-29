@@ -1,0 +1,152 @@
+package com.wanding.service.impl;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.wanding.dao.CardUseRecordInfoMapper;
+import com.wanding.dao.OrdersMapper;
+import com.wanding.dao.UserCardInfoMapper;
+import com.wanding.model.CardUseRecordInfo;
+import com.wanding.model.Orders;
+import com.wanding.model.UserCardInfo;
+import com.wanding.service.CardService;
+
+@Service
+public class CardServiceImpl implements CardService {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CardServiceImpl.class);
+
+	@Autowired
+	private UserCardInfoMapper cardDao;
+	@Autowired
+	private CardUseRecordInfoMapper recordDao;
+
+	@Autowired
+	private OrdersMapper orderDao;
+
+	@Override
+	public UserCardInfo createCard(Map<String, Object> param) {
+
+		String out_trade_no = String.valueOf(param.get("out_trade_no"));
+
+		Orders order = orderDao.selectByOutTradeNo(out_trade_no);
+
+		UserCardInfo card = new UserCardInfo();
+
+		card.setCreatedtime(new Date());
+		card.setUserid(order.getUserId());
+
+		String str = (System.currentTimeMillis() + "").substring(7);
+		card.setAddition1(str);
+		card.setAddition2(UUID.randomUUID().toString());
+
+		cardDao.insert(card);
+		return card;
+	}
+
+	@Override
+	public Map<String, String> activateCard(Map<String, Object> param) {
+
+		Map<String, String> res = new HashMap<String, String>();
+		LOGGER.info("begin to activate card");
+		try {
+			Calendar instance = Calendar.getInstance();
+
+			Date now = instance.getTime();
+
+			instance.add(1, 1);
+
+			Date later = instance.getTime();
+
+			UserCardInfo card = new UserCardInfo();
+
+			card.setFirstusetime(now);
+			card.setInvalidtime(later);
+			card.setId(Integer.valueOf(param.get("id").toString()));
+			card.setAddition3("1");
+			
+			int i = cardDao.updateByPrimaryKeySelective(card);
+
+			LOGGER.info("activate card end ,result : " + i);
+			if (i == 1) {
+				res.put("resultCode", "01");
+				res.put("resultMsg", "success");
+				res.put("resultBody", "Successful activation");
+			} else {
+				res.put("resultCode", "02");
+				res.put("resultMsg", "fail");
+				res.put("resultBody", "Activation fails");
+			}
+		} catch (RuntimeException e) {
+			LOGGER.error("Activate card error", e);
+			res.put("resultCode", "03");
+			res.put("resultMsg", "error");
+			res.put("resultBody", "Activation error");
+		}
+
+		return res;
+	}
+
+	@Override
+	public Map<String, String> useRecord(Map<String, Object> param) {
+
+		Object userId = param.get("userId");
+
+		Map<String, String> record = new HashMap<>();
+		try {
+			record = recordDao.queryRecordByUser(userId);
+		} catch (Exception e) {
+			LOGGER.error("query card use record fail", e);
+		}
+
+		return record;
+	}
+
+	@Override
+	public Map<String, String> createCardRecord(Map<String, Object> param) {
+		Map<String, String> result = new HashMap<String, String>();
+		try {
+			CardUseRecordInfo info = new CardUseRecordInfo();
+
+			info.setCardid(Integer.valueOf(String.valueOf(param.get("cardId"))));
+			info.setUsetime(new Date());
+
+			int insert = recordDao.insert(info);
+
+			if (insert == 1) {
+				LOGGER.info("insert card record success");
+				result.put("returnCode", "success");
+				result.put("returnMsg", "create card record success");
+			} else {
+				LOGGER.error("insert card record fail , insert : " + insert);
+				result.put("returnCode", "fail");
+				result.put("returnMsg", "create card record fail");
+			}
+		} catch (RuntimeException e) {
+			LOGGER.error("insert card record fail", e);
+			result.put("returnCode", "fail");
+			result.put("returnMsg", "create card record error");
+		}
+
+		return result;
+	}
+
+	@Override
+	public boolean isActive(Map<String, Object> param) {
+
+		UserCardInfo card = cardDao.isActive(Integer.valueOf(String.valueOf(param.get("cardId"))));
+		if (card != null) {
+			return true;
+		}
+		return false;
+	}
+
+}

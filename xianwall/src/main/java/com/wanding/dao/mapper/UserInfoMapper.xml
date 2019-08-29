@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanding.dao.UserInfoMapper">
+  <resultMap id="BaseResultMap" type="com.wanding.model.UserInfo">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="realname" jdbcType="VARCHAR" property="realname" />
+    <result column="userage" jdbcType="VARCHAR" property="userage" />
+    <result column="gender" jdbcType="INTEGER" property="gender" />
+    <result column="usertel" jdbcType="VARCHAR" property="usertel" />
+    <result column="idcard" jdbcType="VARCHAR" property="idcard" />
+    <result column="userrole" jdbcType="VARCHAR" property="userrole" />
+    <result column="createdtime" jdbcType="TIMESTAMP" property="createdtime" />
+    <result column="updatedtime" jdbcType="TIMESTAMP" property="updatedtime" />
+    <result column="openid" jdbcType="VARCHAR" property="openId" />
+    <result column="appid" jdbcType="VARCHAR" property="appId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, username, realname, userage, gender, usertel, idcard, userrole, createdtime, 
+    updatedtime, openId,appId,addition1, addition2, addition3
+  </sql>
+  <select id="findUserInfoByOpenId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from userinfo where openId = #{openId,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from userinfo
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.wanding.model.UserInfo">
+    insert into userinfo (username, realname, 
+      userage, gender, usertel, 
+      idcard, userrole, createdtime, 
+      updatedtime, addition1, addition2, 
+      addition3)
+    values (#{username,jdbcType=VARCHAR}, #{realname,jdbcType=VARCHAR}, 
+      #{userage,jdbcType=VARCHAR}, #{gender,jdbcType=INTEGER}, #{usertel,jdbcType=VARCHAR}, 
+      #{idcard,jdbcType=VARCHAR}, #{userrole,jdbcType=VARCHAR}, #{createdtime,jdbcType=TIMESTAMP}, 
+      #{updatedtime,jdbcType=TIMESTAMP}, #{addition1,jdbcType=VARCHAR}, #{addition2,jdbcType=VARCHAR}, 
+      #{addition3,jdbcType=VARCHAR})
+  </insert>
+  
+  <insert id="insertSelective" useGeneratedKeys="true"  keyProperty="id" parameterType="com.wanding.model.UserInfo">
+    insert into userinfo
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="realname != null">
+        realname,
+      </if>
+      <if test="userage != null">
+        userage,
+      </if>
+      <if test="gender != null">
+        gender,
+      </if>
+      <if test="usertel != null">
+        usertel,
+      </if>
+      <if test="idcard != null">
+        idcard,
+      </if>
+      <if test="userrole != null">
+        userrole,
+      </if>
+      <if test="createdtime != null">
+        createdtime,
+      </if>
+      <if test="updatedtime != null">
+        updatedtime,
+      </if>
+      <if test="openId != null">
+        openId,
+      </if>
+      <if test="appId != null">
+        appId,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="realname != null">
+        #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="userage != null">
+        #{userage,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        #{gender,jdbcType=INTEGER},
+      </if>
+      <if test="usertel != null">
+        #{usertel,jdbcType=VARCHAR},
+      </if>
+      <if test="idcard != null">
+        #{idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="userrole != null">
+        #{userrole,jdbcType=VARCHAR},
+      </if>
+      <if test="createdtime != null">
+        #{createdtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedtime != null">
+        #{updatedtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="openId != null">
+        #{openId,jdbcType=VARCHAR},
+      </if>
+      <if test="appId != null">
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateUserInfo" parameterType="com.wanding.model.UserInfo">
+    update userinfo
+    <set>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="realname != null">
+        realname = #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="userage != null">
+        userage = #{userage,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        gender = #{gender,jdbcType=INTEGER},
+      </if>
+      <if test="usertel != null">
+        usertel = #{usertel,jdbcType=VARCHAR},
+      </if>
+      <if test="idcard != null">
+        idcard = #{idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="userrole != null">
+        userrole = #{userrole,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedtime != null">
+        updatedtime = #{updatedtime,jdbcType=TIMESTAMP},
+      </if>
+      
+    </set>
+    where OpenId = #{openId,jdbcType=VARCHAR}
+  </update>
+
+
+  <update id="updateByPrimaryKey" parameterType="com.wanding.model.UserInfo">
+    update userinfo
+    set username = #{username,jdbcType=VARCHAR},
+      realname = #{realname,jdbcType=VARCHAR},
+      userage = #{userage,jdbcType=VARCHAR},
+      gender = #{gender,jdbcType=INTEGER},
+      usertel = #{usertel,jdbcType=VARCHAR},
+      idcard = #{idcard,jdbcType=VARCHAR},
+      userrole = #{userrole,jdbcType=VARCHAR},
+      createdtime = #{createdtime,jdbcType=TIMESTAMP},
+      updatedtime = #{updatedtime,jdbcType=TIMESTAMP},
+      addition1 = #{addition1,jdbcType=VARCHAR},
+      addition2 = #{addition2,jdbcType=VARCHAR},
+      addition3 = #{addition3,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <select id="findAllUserInfo"  resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" />  from userinfo
+  </select>
+  
+  <select id="findUserByUsername"  parameterType="java.lang.String" resultType="com.wanding.model.UserInfo">
+    select  *  from userinfo where userrole='admin' and  username =#{username,jdbcType=VARCHAR}
+  </select>
+   <select id="modifyPwd"  parameterType="com.wanding.model.UserInfo">
+    update userinfo set password=#{password,jdbcType=VARCHAR} where id=#{id}
+  </select>
+  
+  
+  
+  
+  
+  
+</mapper>

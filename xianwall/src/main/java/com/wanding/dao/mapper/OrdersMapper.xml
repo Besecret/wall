@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanding.dao.OrdersMapper">
+	<resultMap id="BaseResultMap" type="com.wanding.model.Orders">
+		<id column="ID" jdbcType="INTEGER" property="id" />
+		<result column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="card_id" jdbcType="INTEGER" property="cardId" />
+		<result column="pay_type" jdbcType="VARCHAR" property="payType" />
+		<result column="merchant_no" jdbcType="VARCHAR" property="merchantNo" />
+		<result column="terminal_id" jdbcType="VARCHAR" property="terminalId" />
+		<result column="terminal_trace" jdbcType="VARCHAR" property="terminalTrace" />
+		<result column="terminal_time" jdbcType="VARCHAR" property="terminalTime" />
+		<result column="auth_no" jdbcType="VARCHAR" property="authNo" />
+		<result column="total_fee" jdbcType="DECIMAL" property="totalFee" />
+		<result column="order_body" jdbcType="VARCHAR" property="orderBody" />
+		<result column="return_code" jdbcType="VARCHAR" property="returnCode" />
+		<result column="return_msg" jdbcType="VARCHAR" property="returnMsg" />
+		<result column="result_code" jdbcType="VARCHAR" property="resultCode" />
+		<result column="end_time" jdbcType="VARCHAR" property="endTime" />
+		<result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
+		<result column="notify_url" jdbcType="VARCHAR" property="notifyUrl" />
+		<result column="CreatedTime" jdbcType="TIMESTAMP" property="createdtime" />
+		<result column="UpdatedTime" jdbcType="TIMESTAMP" property="updatedtime" />
+		<result column="Addition1" jdbcType="VARCHAR" property="addition1" />
+		<result column="Addition2" jdbcType="VARCHAR" property="addition2" />
+		<result column="Addition3" jdbcType="VARCHAR" property="addition3" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, user_id, card_id, pay_type, merchant_no, terminal_id,
+		terminal_trace,
+		terminal_time,
+		auth_no, total_fee, order_body,
+		return_code, return_msg, result_code,
+		end_time, out_trade_no,
+		CreatedTime, UpdatedTime, Addition1, Addition2, Addition3
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from orders
+		where ID = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from orders
+		where ID = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.wanding.model.Orders">
+		insert into orders ( user_id,
+		card_id,
+		pay_type, merchant_no, terminal_id,
+		terminal_trace,
+		terminal_time, auth_no,
+		total_fee, order_body, return_code,
+		return_msg,
+		result_code, end_time,
+		out_trade_no, CreatedTime, UpdatedTime,
+		Addition1, Addition2, Addition3
+		)
+		values (#{userId,jdbcType=INTEGER},
+		#{cardId,jdbcType=INTEGER},
+		#{payType,jdbcType=VARCHAR},
+		#{merchantNo,jdbcType=VARCHAR},
+		#{terminalId,jdbcType=VARCHAR},
+		#{terminalTrace,jdbcType=VARCHAR}, #{terminalTime,jdbcType=VARCHAR},
+		#{authNo,jdbcType=VARCHAR},
+		#{totalFee,jdbcType=DECIMAL},
+		#{orderBody,jdbcType=VARCHAR},
+		#{returnCode,jdbcType=VARCHAR},
+		#{returnMsg,jdbcType=VARCHAR}, #{resultCode,jdbcType=VARCHAR},
+		#{endTime,jdbcType=VARCHAR},
+		#{outTradeNo,jdbcType=VARCHAR},
+		#{createdtime,jdbcType=TIMESTAMP},
+		#{updatedtime,jdbcType=TIMESTAMP},
+		#{addition1,jdbcType=VARCHAR}, #{addition2,jdbcType=VARCHAR},
+		#{addition3,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.wanding.model.Orders">
+		insert into orders
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="cardId != null">
+				card_id,
+			</if>
+			<if test="payType != null">
+				pay_type,
+			</if>
+			<if test="merchantNo != null">
+				merchant_no,
+			</if>
+			<if test="terminalId != null">
+				terminal_id,
+			</if>
+			<if test="terminalTrace != null">
+				terminal_trace,
+			</if>
+			<if test="terminalTime != null">
+				terminal_time,
+			</if>
+			<if test="authNo != null">
+				auth_no,
+			</if>
+			<if test="totalFee != null">
+				total_fee,
+			</if>
+			<if test="orderBody != null">
+				order_body,
+			</if>
+			<if test="returnCode != null">
+				return_code,
+			</if>
+			<if test="returnMsg != null">
+				return_msg,
+			</if>
+			<if test="resultCode != null">
+				result_code,
+			</if>
+			<if test="endTime != null">
+				end_time,
+			</if>
+			<if test="outTradeNo != null">
+				out_trade_no,
+			</if>
+			<if test="createdtime != null">
+				CreatedTime,
+			</if>
+			<if test="updatedtime != null">
+				UpdatedTime,
+			</if>
+			<if test="addition1 != null">
+				Addition1,
+			</if>
+			<if test="addition2 != null">
+				Addition2,
+			</if>
+			<if test="addition3 != null">
+				Addition3,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="cardId != null">
+				#{cardId,jdbcType=INTEGER},
+			</if>
+			<if test="payType != null">
+				#{payType,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantNo != null">
+				#{merchantNo,jdbcType=VARCHAR},
+			</if>
+			<if test="terminalId != null">
+				#{terminalId,jdbcType=VARCHAR},
+			</if>
+			<if test="terminalTrace != null">
+				#{terminalTrace,jdbcType=VARCHAR},
+			</if>
+			<if test="terminalTime != null">
+				#{terminalTime,jdbcType=VARCHAR},
+			</if>
+			<if test="authNo != null">
+				#{authNo,jdbcType=VARCHAR},
+			</if>
+			<if test="totalFee != null">
+				#{totalFee,jdbcType=DECIMAL},
+			</if>
+			<if test="orderBody != null">
+				#{orderBody,jdbcType=VARCHAR},
+			</if>
+			<if test="returnCode != null">
+				#{returnCode,jdbcType=VARCHAR},
+			</if>
+			<if test="returnMsg != null">
+				#{returnMsg,jdbcType=VARCHAR},
+			</if>
+			<if test="resultCode != null">
+				#{resultCode,jdbcType=VARCHAR},
+			</if>
+			<if test="endTime != null">
+				#{endTime,jdbcType=VARCHAR},
+			</if>
+			<if test="outTradeNo != null">
+				#{outTradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="createdtime != null">
+				#{createdtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatedtime != null">
+				#{updatedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="addition1 != null">
+				#{addition1,jdbcType=VARCHAR},
+			</if>
+			<if test="addition2 != null">
+				#{addition2,jdbcType=VARCHAR},
+			</if>
+			<if test="addition3 != null">
+				#{addition3,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.wanding.model.Orders">
+		update orders
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="cardId != null">
+				card_id = #{cardId,jdbcType=INTEGER},
+			</if>
+			<if test="payType != null">
+				pay_type = #{payType,jdbcType=VARCHAR},
+			</if>
+			<if test="merchantNo != null">
+				merchant_no = #{merchantNo,jdbcType=VARCHAR},
+			</if>
+			<if test="terminalId != null">
+				terminal_id = #{terminalId,jdbcType=VARCHAR},
+			</if>
+			<if test="terminalTrace != null">
+				terminal_trace = #{terminalTrace,jdbcType=VARCHAR},
+			</if>
+			<if test="terminalTime != null">
+				terminal_time = #{terminalTime,jdbcType=VARCHAR},
+			</if>
+			<if test="authNo != null">
+				auth_no = #{authNo,jdbcType=VARCHAR},
+			</if>
+			<if test="totalFee != null">
+				total_fee = #{totalFee,jdbcType=DECIMAL},
+			</if>
+			<if test="orderBody != null">
+				order_body = #{orderBody,jdbcType=VARCHAR},
+			</if>
+			<if test="returnCode != null">
+				return_code = #{returnCode,jdbcType=VARCHAR},
+			</if>
+			<if test="returnMsg != null">
+				return_msg = #{returnMsg,jdbcType=VARCHAR},
+			</if>
+			<if test="resultCode != null">
+				result_code = #{resultCode,jdbcType=VARCHAR},
+			</if>
+			<if test="endTime != null">
+				end_time = #{endTime,jdbcType=VARCHAR},
+			</if>
+<!-- 			<if test="outTradeNo != null"> -->
+<!-- 				out_trade_no = #{outTradeNo,jdbcType=VARCHAR}, -->
+<!-- 			</if> -->
+			<if test="createdtime != null">
+				CreatedTime = #{createdtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatedtime != null">
+				UpdatedTime = #{updatedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="addition1 != null">
+				Addition1 = #{addition1,jdbcType=VARCHAR},
+			</if>
+			<if test="addition2 != null">
+				Addition2 = #{addition2,jdbcType=VARCHAR},
+			</if>
+			<if test="addition3 != null">
+				Addition3 = #{addition3,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where out_trade_no = #{outTradeNo,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.wanding.model.Orders">
+		update orders
+		set
+		user_id = #{userId,jdbcType=INTEGER},
+		card_id =
+		#{cardId,jdbcType=INTEGER},
+		pay_type = #{payType,jdbcType=VARCHAR},
+		merchant_no = #{merchantNo,jdbcType=VARCHAR},
+		terminal_id =
+		#{terminalId,jdbcType=VARCHAR},
+		terminal_trace =
+		#{terminalTrace,jdbcType=VARCHAR},
+		terminal_time =
+		#{terminalTime,jdbcType=VARCHAR},
+		auth_no = #{authNo,jdbcType=VARCHAR},
+		total_fee = #{totalFee,jdbcType=DECIMAL},
+		order_body =
+		#{orderBody,jdbcType=VARCHAR},
+		return_code =
+		#{returnCode,jdbcType=VARCHAR},
+		return_msg =
+		#{returnMsg,jdbcType=VARCHAR},
+		result_code =
+		#{resultCode,jdbcType=VARCHAR},
+		end_time = #{endTime,jdbcType=VARCHAR},
+		out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+		CreatedTime =
+		#{createdtime,jdbcType=TIMESTAMP},
+		UpdatedTime =
+		#{updatedtime,jdbcType=TIMESTAMP},
+		Addition1 =
+		#{addition1,jdbcType=VARCHAR},
+		Addition2 =
+		#{addition2,jdbcType=VARCHAR},
+		Addition3 =
+		#{addition3,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="selectByOutTradeNo" resultType="com.wanding.model.Orders">
+		select * from orders 
+		where  out_trade_no = #{outNo}
+	</select>
+</mapper>

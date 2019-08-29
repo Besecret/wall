@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanding.dao.UserCardInfoMapper">
+
+	<resultMap id="BaseResultMap" type="com.wanding.model.UserCardInfo">
+		<id column="ID" jdbcType="INTEGER" property="id" />
+		<result column="CardName" jdbcType="INTEGER" property="cardname" />
+		<result column="UserId" jdbcType="INTEGER" property="userid" />
+		<result column="FirstUseTime" jdbcType="TIMESTAMP" property="firstusetime" />
+		<result column="CreatedTime" jdbcType="TIMESTAMP" property="createdtime" />
+		<result column="InvalidTime" jdbcType="TIMESTAMP" property="invalidtime" />
+		<result column="Num" jdbcType="INTEGER" property="num" />
+		<result column="CardType" jdbcType="VARCHAR" property="cardtype" />
+		<result column="Addition1" jdbcType="VARCHAR" property="addition1" />
+		<result column="Addition2" jdbcType="VARCHAR" property="addition2" />
+		<result column="Addition3" jdbcType="VARCHAR" property="addition3" />
+		<association property="user" javaType="com.wanding.model.UserInfo" resultMap="UserResultMap"/>  
+	</resultMap>
+	
+	
+  <resultMap id="UserResultMap" type="com.wanding.model.UserInfo">
+    <id column="userId" jdbcType="INTEGER" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="realname" jdbcType="VARCHAR" property="realname" />
+    <result column="userage" jdbcType="VARCHAR" property="userage" />
+    <result column="gender" jdbcType="INTEGER" property="gender" />
+    <result column="usertel" jdbcType="VARCHAR" property="usertel" />
+    <result column="idcard" jdbcType="VARCHAR" property="idcard" />
+    <result column="userrole" jdbcType="VARCHAR" property="userrole" />
+    <result column="user_create_time" jdbcType="TIMESTAMP" property="createdtime" />
+    <result column="user_update_time" jdbcType="TIMESTAMP" property="updatedtime" />
+    <result column="addition1" jdbcType="VARCHAR" property="addition1" />
+    <result column="addition2" jdbcType="VARCHAR" property="addition2" />
+    <result column="addition3" jdbcType="VARCHAR" property="addition3" />
+  </resultMap>
+	
+	
+	<sql id="Base_Column_List">
+		usercardinfo.ID, CardName, UserId, FirstUseTime, usercardinfo.CreatedTime,
+		InvalidTime, Num,
+		CardType, usercardinfo.Addition1,
+		usercardinfo.Addition2,usercardinfo.Addition3
+	</sql>
+	
+	
+	<sql id="User_Column_List">
+    	userinfo.ID ,username,realname,userage,gender,
+		usertel,idcard,userrole,userinfo.createdtime ,userinfo.updatedtime ,userinfo.addition1 ,
+		userinfo.addition2 ,userinfo.addition3 ,
+  	</sql>
+
+
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		usercardinfo
+		where ID = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.wanding.model.UserCardInfo">
+		insert into usercardinfo (ID,
+		CardName, UserId,
+		FirstUseTime, CreatedTime, InvalidTime,
+		Num, CardType,
+		Addition1,
+		Addition2, Addition3)
+		values (#{id,jdbcType=INTEGER},
+		#{cardname,jdbcType=INTEGER},
+		#{userid,jdbcType=INTEGER},
+		#{firstusetime,jdbcType=TIMESTAMP}, #{createdtime,jdbcType=TIMESTAMP},
+		#{invalidtime,jdbcType=TIMESTAMP},
+		#{num,jdbcType=INTEGER},
+		#{cardtype,jdbcType=VARCHAR},
+		#{addition1,jdbcType=VARCHAR},
+		#{addition2,jdbcType=VARCHAR}, #{addition3,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.wanding.model.UserCardInfo">
+		insert into usercardinfo
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="cardname != null">
+				CardName,
+			</if>
+			<if test="userid != null">
+				UserId,
+			</if>
+			<if test="firstusetime != null">
+				FirstUseTime,
+			</if>
+			<if test="createdtime != null">
+				CreatedTime,
+			</if>
+			<if test="invalidtime != null">
+				InvalidTime,
+			</if>
+			<if test="num != null">
+				Num,
+			</if>
+			<if test="cardtype != null">
+				CardType,
+			</if>
+			<if test="addition1 != null">
+				Addition1,
+			</if>
+			<if test="addition2 != null">
+				Addition2,
+			</if>
+			<if test="addition3 != null">
+				Addition3,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="cardname != null">
+				#{cardname,jdbcType=INTEGER},
+			</if>
+			<if test="userid != null">
+				#{userid,jdbcType=INTEGER},
+			</if>
+			<if test="firstusetime != null">
+				#{firstusetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createdtime != null">
+				#{createdtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="invalidtime != null">
+				#{invalidtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="num != null">
+				#{num,jdbcType=INTEGER},
+			</if>
+			<if test="cardtype != null">
+				#{cardtype,jdbcType=VARCHAR},
+			</if>
+			<if test="addition1 != null">
+				#{addition1,jdbcType=VARCHAR},
+			</if>
+			<if test="addition2 != null">
+				#{addition2,jdbcType=VARCHAR},
+			</if>
+			<if test="addition3 != null">
+				#{addition3,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.wanding.model.UserCardInfo">
+		update usercardinfo
+		<set>
+			<if test="cardname != null">
+				CardName = #{cardname,jdbcType=INTEGER},
+			</if>
+			<if test="userid != null">
+				UserId = #{userid,jdbcType=INTEGER},
+			</if>
+			<if test="firstusetime != null">
+				FirstUseTime = #{firstusetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createdtime != null">
+				CreatedTime = #{createdtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="invalidtime != null">
+				InvalidTime = #{invalidtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="num != null">
+				Num = #{num,jdbcType=INTEGER},
+			</if>
+			<if test="cardtype != null">
+				CardType = #{cardtype,jdbcType=VARCHAR},
+			</if>
+			<if test="addition1 != null">
+				Addition1 = #{addition1,jdbcType=VARCHAR},
+			</if>
+			<if test="addition2 != null">
+				Addition2 = #{addition2,jdbcType=VARCHAR},
+			</if>
+			<if test="addition3 != null">
+				Addition3 = #{addition3,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.wanding.model.UserCardInfo">
+		update
+		usercardinfo
+		set CardName = #{cardname,jdbcType=INTEGER},
+		UserId =
+		#{userid,jdbcType=INTEGER},
+		FirstUseTime =
+		#{firstusetime,jdbcType=TIMESTAMP},
+		CreatedTime =
+		#{createdtime,jdbcType=TIMESTAMP},
+		InvalidTime =
+		#{invalidtime,jdbcType=TIMESTAMP},
+		Num = #{num,jdbcType=INTEGER},
+		CardType = #{cardtype,jdbcType=VARCHAR},
+		Addition1 =
+		#{addition1,jdbcType=VARCHAR},
+		Addition2 =
+		#{addition2,jdbcType=VARCHAR},
+		Addition3 =
+		#{addition3,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="invalidCard">
+		<![CDATA[ 
+		update usercardinfo s set s.Addition3 = 0 where id in
+		(
+		select id from (SELECT * from usercardinfo s where s.InvalidTime < NOW()) s
+		)
+		]]>
+	</update>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultType="com.wanding.model.UserCardInfo">
+		select
+		*
+		from usercardinfo
+		where ID = #{id,jdbcType=INTEGER}
+		and Addition3 = '1'
+	</select>
+  
+  
+  <select id="queryAllCardInfo" resultMap="BaseResultMap">
+    select 
+	<include refid="User_Column_List" />
+    <include refid="Base_Column_List" />
+    from usercardinfo , userinfo
+    where usercardinfo.UserId = userinfo.ID
+  </select>
+  
+  
+</mapper>

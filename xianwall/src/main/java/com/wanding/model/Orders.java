@@ -1,0 +1,229 @@
+package com.wanding.model;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+public class Orders {
+	private Integer id;
+
+	private Integer userId;
+
+	private Integer cardId;
+
+	private String payType;
+
+	private String merchantNo;
+
+	private String terminalId;
+
+	private String terminalTrace;
+
+	private String terminalTime;
+
+	private String authNo;
+
+	private BigDecimal totalFee;
+
+	private String orderBody;
+
+	private String returnCode;
+
+	private String returnMsg;
+
+	private String resultCode;
+
+	private String endTime;
+
+	private String outTradeNo;
+
+	private String notifyUrl;
+
+	private Date createdtime;
+
+	private Date updatedtime;
+
+	// 回调地址
+	private String addition1;
+
+	// 渠道订单号
+	private String addition2;
+
+	// 关联卡的uuid
+	private String addition3;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
+	public Integer getCardId() {
+		return cardId;
+	}
+
+	public void setCardId(Integer cardId) {
+		this.cardId = cardId;
+	}
+
+	public String getPayType() {
+		return payType;
+	}
+
+	public void setPayType(String payType) {
+		this.payType = payType == null ? null : payType.trim();
+	}
+
+	public String getMerchantNo() {
+		return merchantNo;
+	}
+
+	public void setMerchantNo(String merchantNo) {
+		this.merchantNo = merchantNo == null ? null : merchantNo.trim();
+	}
+
+	public String getTerminalId() {
+		return terminalId;
+	}
+
+	public void setTerminalId(String terminalId) {
+		this.terminalId = terminalId == null ? null : terminalId.trim();
+	}
+
+	public String getTerminalTrace() {
+		return terminalTrace;
+	}
+
+	public void setTerminalTrace(String terminalTrace) {
+		this.terminalTrace = terminalTrace == null ? null : terminalTrace.trim();
+	}
+
+	public String getTerminalTime() {
+		return terminalTime;
+	}
+
+	public void setTerminalTime(String terminalTime) {
+		this.terminalTime = terminalTime == null ? null : terminalTime.trim();
+	}
+
+	public String getAuthNo() {
+		return authNo;
+	}
+
+	public void setAuthNo(String authNo) {
+		this.authNo = authNo == null ? null : authNo.trim();
+	}
+
+	public BigDecimal getTotalFee() {
+		return totalFee;
+	}
+
+	public void setTotalFee(BigDecimal totalFee) {
+		this.totalFee = totalFee;
+	}
+
+	public String getOrderBody() {
+		return orderBody;
+	}
+
+	public void setOrderBody(String orderBody) {
+		this.orderBody = orderBody == null ? null : orderBody.trim();
+	}
+
+	public String getReturnCode() {
+		return returnCode;
+	}
+
+	public void setReturnCode(String returnCode) {
+		this.returnCode = returnCode == null ? null : returnCode.trim();
+	}
+
+	public String getReturnMsg() {
+		return returnMsg;
+	}
+
+	public void setReturnMsg(String returnMsg) {
+		this.returnMsg = returnMsg == null ? null : returnMsg.trim();
+	}
+
+	public String getResultCode() {
+		return resultCode;
+	}
+
+	public void setResultCode(String resultCode) {
+		this.resultCode = resultCode == null ? null : resultCode.trim();
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime == null ? null : endTime.trim();
+	}
+
+	public String getOutTradeNo() {
+		return outTradeNo;
+	}
+
+	public void setOutTradeNo(String outTradeNo) {
+		this.outTradeNo = outTradeNo == null ? null : outTradeNo.trim();
+	}
+
+	public String getNotifyUrl() {
+		return notifyUrl;
+	}
+
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
+	}
+
+	public Date getCreatedtime() {
+		return createdtime;
+	}
+
+	public void setCreatedtime(Date createdtime) {
+		this.createdtime = createdtime;
+	}
+
+	public Date getUpdatedtime() {
+		return updatedtime;
+	}
+
+	public void setUpdatedtime(Date updatedtime) {
+		this.updatedtime = updatedtime;
+	}
+
+	public String getAddition1() {
+		return addition1;
+	}
+
+	public void setAddition1(String addition1) {
+		this.addition1 = addition1 == null ? null : addition1.trim();
+	}
+
+	public String getAddition2() {
+		return addition2;
+	}
+
+	public void setAddition2(String addition2) {
+		this.addition2 = addition2 == null ? null : addition2.trim();
+	}
+
+	public String getAddition3() {
+		return addition3;
+	}
+
+	public void setAddition3(String addition3) {
+		this.addition3 = addition3 == null ? null : addition3.trim();
+	}
+}
