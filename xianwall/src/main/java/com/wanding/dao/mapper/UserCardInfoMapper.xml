@@ -14,41 +14,54 @@
 		<result column="Addition1" jdbcType="VARCHAR" property="addition1" />
 		<result column="Addition2" jdbcType="VARCHAR" property="addition2" />
 		<result column="Addition3" jdbcType="VARCHAR" property="addition3" />
-		<association property="user" javaType="com.wanding.model.UserInfo" resultMap="UserResultMap"/>  
+		<association property="user" javaType="com.wanding.model.UserInfo"
+			resultMap="UserResultMap" />
 	</resultMap>
-	
-	
-  <resultMap id="UserResultMap" type="com.wanding.model.UserInfo">
-    <id column="userId" jdbcType="INTEGER" property="id" />
-    <result column="username" jdbcType="VARCHAR" property="username" />
-    <result column="realname" jdbcType="VARCHAR" property="realname" />
-    <result column="userage" jdbcType="VARCHAR" property="userage" />
-    <result column="gender" jdbcType="INTEGER" property="gender" />
-    <result column="usertel" jdbcType="VARCHAR" property="usertel" />
-    <result column="idcard" jdbcType="VARCHAR" property="idcard" />
-    <result column="userrole" jdbcType="VARCHAR" property="userrole" />
-    <result column="user_create_time" jdbcType="TIMESTAMP" property="createdtime" />
-    <result column="user_update_time" jdbcType="TIMESTAMP" property="updatedtime" />
-    <result column="addition1" jdbcType="VARCHAR" property="addition1" />
-    <result column="addition2" jdbcType="VARCHAR" property="addition2" />
-    <result column="addition3" jdbcType="VARCHAR" property="addition3" />
-  </resultMap>
-	
-	
+
+
+	<resultMap id="UserResultMap" type="com.wanding.model.UserInfo">
+		<id column="userId" jdbcType="INTEGER" property="id" />
+		<result column="username" jdbcType="VARCHAR" property="username" />
+		<result column="realname" jdbcType="VARCHAR" property="realname" />
+		<result column="userage" jdbcType="VARCHAR" property="userage" />
+		<result column="gender" jdbcType="INTEGER" property="gender" />
+		<result column="usertel" jdbcType="VARCHAR" property="usertel" />
+		<result column="idcard" jdbcType="VARCHAR" property="idcard" />
+		<result column="userrole" jdbcType="VARCHAR" property="userrole" />
+		<result column="user_create_time" jdbcType="TIMESTAMP"
+			property="createdtime" />
+		<result column="user_update_time" jdbcType="TIMESTAMP"
+			property="updatedtime" />
+		<result column="addition1" jdbcType="VARCHAR" property="addition1" />
+		<result column="addition2" jdbcType="VARCHAR" property="addition2" />
+		<result column="addition3" jdbcType="VARCHAR" property="addition3" />
+	</resultMap>
+
+
 	<sql id="Base_Column_List">
-		usercardinfo.ID, CardName, UserId, FirstUseTime, usercardinfo.CreatedTime,
+		usercardinfo.ID, CardName, UserId, FirstUseTime,
+		usercardinfo.CreatedTime,
 		InvalidTime, Num,
-		CardType, usercardinfo.Addition1,
+		CardType,
+		usercardinfo.Addition1,
 		usercardinfo.Addition2,usercardinfo.Addition3
 	</sql>
-	
-	
-	<sql id="User_Column_List">
-    	userinfo.ID ,username,realname,userage,gender,
-		usertel,idcard,userrole,userinfo.createdtime ,userinfo.updatedtime ,userinfo.addition1 ,
-		userinfo.addition2 ,userinfo.addition3 ,
-  	</sql>
 
+
+	<sql id="User_Column_List">
+		userinfo.ID ,username,realname,userage,gender,
+		usertel,idcard,userrole,userinfo.createdtime ,userinfo.updatedtime
+		,userinfo.addition1 ,
+		userinfo.addition2 ,userinfo.addition3 ,
+	</sql>
+
+
+
+
+
+	<!-- <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap"> 
+		select <include refid="Base_Column_List" /> from usercardinfo where ID = 
+		#{id,jdbcType=INTEGER} </select> -->
 
 
 
@@ -221,15 +234,55 @@
 		where ID = #{id,jdbcType=INTEGER}
 		and Addition3 = '1'
 	</select>
-  
-  
-  <select id="queryAllCardInfo" resultMap="BaseResultMap">
-    select 
-	<include refid="User_Column_List" />
-    <include refid="Base_Column_List" />
-    from usercardinfo , userinfo
-    where usercardinfo.UserId = userinfo.ID
-  </select>
-  
-  
+
+
+	<select id="queryAllCardInfo" resultMap="BaseResultMap">
+		SELECT
+			usercardinfo.ID,
+			CardName,
+			UserId,
+			FirstUseTime,
+			usercardinfo.CreatedTime,
+			InvalidTime,
+			Num,
+			CardType,
+			userinfo.ID,
+			username,
+			realname,
+			userage,
+			gender,
+			usertel,
+			idcard,
+			userrole
+		FROM
+			usercardinfo,
+			userinfo
+		WHERE
+			usercardinfo.UserId = userinfo.ID
+		ORDER BY
+			usercardinfo.CreatedTime DESC
+	</select>
+	<select id="queryCardByUser" resultType="Map">
+		select
+		*
+		from usercardinfo s
+		where s.UserId = #{userId}
+		order by createdtime desc 
+		limit 1
+	</select>
+	<select id="queryCardByUserUse" resultType="Integer">
+		select
+		count(1)
+		from usercardinfo s
+		where s.UserId = #{userId} and s.Addition3 = 1
+		order by createdtime desc 
+	</select>
+	<select id="isActive" resultMap="BaseResultMap">
+		select
+		*
+		from usercardinfo s
+		where s.id = #{id} and s.Addition3 = 1
+	</select>
+
+
 </mapper>

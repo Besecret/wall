@@ -1,0 +1,2 @@
+exclude=/static/**,/**/*.html,/error,/login,/order/update,/order/create
+add=

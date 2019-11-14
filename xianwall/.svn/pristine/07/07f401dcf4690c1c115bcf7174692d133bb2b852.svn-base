@@ -1,0 +1,252 @@
+package com.wanding.service.impl;
+
+import java.io.InputStream;
+import java.net.URLEncoder;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.wanding.comm.Constant;
+import com.wanding.dao.SSFStudentIdCardMapper;
+import com.wanding.dao.UserInfoMapper;
+import com.wanding.model.SSFStudentIdCard;
+import com.wanding.model.UserInfo;
+import com.wanding.model.UserInfoVo;
+import com.wanding.service.PageService;
+import com.wanding.service.UserInfoService;
+import com.wanding.util.CommonUtil;
+import com.wanding.util.ImportExcel;
+import com.wanding.util.SessionIdGeneratorUtils;
+import com.wanding.util.queryhelper.QueryExecutor;
+
+@Service(value = "userInfoSerice")
+public class UserInfoServiceImpl extends PageService implements UserInfoService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserInfoServiceImpl.class);
+    @Autowired
+    private UserInfoMapper userInfoMapper;
+
+    @Autowired
+    private SSFStudentIdCardMapper sSFStudentIdCardMapper;
+    @Autowired
+    private RestTemplate restTemplate;
+
+
+    @Override
+    public int addUserInfo(UserInfo userInfo) {
+        return userInfoMapper.insertSelective(userInfo);
+    }
+
+    @Override
+    public Object findAllUserInfo(int pageNum, int pageSize) {
+        return this.selectPage(pageNum, pageSize, new QueryExecutor<UserInfo>() {
+            @Override
+            public List<UserInfo> execute() {
+                return userInfoMapper.findAllUserInfo();
+            }
+        }).getResponseInfo();
+    }
+
+    @Override
+    public List<UserInfo> queryAllUserInfo() {
+
+        return userInfoMapper.findAllUserInfo();
+    }
+
+
+    @Override
+    public List<UserInfo> findAllManageInfo() {
+
+        return userInfoMapper.findAllManageInfo();
+    }
+
+    @Override
+    public UserInfo findUserInfoByOpenId(String openId) {
+
+        return userInfoMapper.findUserInfoByOpenId(openId);
+    }
+
+    @Override
+    public int updateUserInfo(UserInfo userInfo) {
+        return userInfoMapper.updateUserInfo(userInfo);
+    }
+
+    @Override
+    public UserInfo findUserByUsername(String username) {
+        return userInfoMapper.findUserByUsername(username);
+    }
+
+    @Override
+    public int findUserByRealName(String username) {
+        return userInfoMapper.findUserByRealName(username);
+    }
+
+
+
+    @Override
+    public UserInfo findUserByUserId(int userId) {
+        return userInfoMapper.findUserByUserId(userId);
+    }
+
+    @Override
+    public Integer modifyPwd(UserInfo user) {
+        return userInfoMapper.modifyPwd(user);
+    }
+
+    @Override
+    public List<UserInfo> queryUserInfoByPaging(int pageNum, int pageSize) {
+
+        return userInfoMapper.findAllUserInfo().stream().skip((pageNum - 1) * pageSize)
+                .limit(pageNum * pageSize).collect(Collectors.toList());
+
+    }
+
+    @Override
+    public UserInfo jscodeToSession(String param) {
+        JSONObject paramjson = JSONObject.parseObject(param);
+        String js_code = (String) paramjson.getString("code");
+        String appid = (String) paramjson.getString("appid");
+        String requestUrl =
+                "https://api.weixin.qq.com/sns/jscode2session?appid={?}&secret={?}&js_code={?}&grant_type=authorization_code";
+        LOGGER.info("请求微信接口地址====" + requestUrl);
+        String returnRes = restTemplate.getForObject(requestUrl, String.class, appid,
+                Constant.APPSECRET, js_code);
+        // String returnRes = HttpPostUtil.sendGet(requestUrl);
+        LOGGER.info("登录凭证校验返回结果====" + returnRes);
+        if (StringUtils.isNotEmpty(returnRes)) {
+            JSONObject resultObj = JSON.parseObject(returnRes);
+            if (resultObj.get("openid") == null || resultObj.get("session_key") == null) {
+                return null;
+            }
+            String openId = (String) resultObj.get("openid");
+            String sessionKey = (String) resultObj.get("session_key");
+            String unionid = (String) resultObj.get("unionid");
+            String session = UUID.randomUUID().toString().replaceAll("-","");//SessionIdGeneratorUtils.generateSessionId();
+            UserInfo userInfo = userInfoMapper.findUserInfoByOpenId(openId);
+            if (userInfo == null) {
+                userInfo = new UserInfo();
+                userInfo.setOpenId(openId);
+                userInfo.setAppId(appid);
+                userInfo.setSession(session);
+                userInfo.setSessionkey(sessionKey);
+                userInfo.setUnionid(unionid);
+                userInfo.setExpiresTime(LocalDateTime.now().plusHours(2)
+                        .toInstant(ZoneOffset.of("+8")).toEpochMilli() / 1000);
+                userInfo.setCreatedtime(new Date(System.currentTimeMillis()));
+                userInfo.setUpdatedtime(new Date(System.currentTimeMillis()));
+                userInfoMapper.insertSelective(userInfo);
+            } else {
+                userInfo.setSession(session);
+                userInfo.setSessionkey(sessionKey);
+                userInfo.setUnionid(unionid);
+                userInfo.setExpiresTime(LocalDateTime.now().plusHours(2)
+                        .toInstant(ZoneOffset.of("+8")).toEpochMilli());
+                userInfoMapper.updateUserInfo(userInfo);
+            }
+            return userInfo;
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> miniFans(UserInfoVo userinfovo) {
+        Map<String, Object> returnMap = new HashMap<>();
+        try {
+            LOGGER.info("======encryptedData=" + userinfovo.getEncryptedData() + ",iv="
+                    + userinfovo.getIv() + ",userInfo=" + userinfovo);
+            UserInfo session = new UserInfo();
+            session.setUsername(
+                    URLEncoder.encode(userinfovo.getNickName(), Constant.DEFAULT_CHARSET));
+            session.setGender(userinfovo.getGender());
+            session.setOpenId(userinfovo.getOpenId());
+            userInfoMapper.updateUserInfo(session);
+        } catch (Exception e) {
+            LOGGER.info("===粉丝信息异常==");
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+
+        }
+        LOGGER.info("粉丝信息业务出参 miniFans()=" + returnMap);
+        return returnMap;
+    }
+
+    @Override
+    public UserInfo findUserInfoBySession(String session) {
+        return userInfoMapper.findBySession(session);
+    }
+
+    @Override
+    public int updateUserInfobysession(UserInfo record) {
+        return userInfoMapper.updateUserInfobysession(record);
+    }
+
+    /**
+     * 批量导入老会员
+     *
+     * @param
+     * @return
+     */
+    @Override
+    public Map<String, Object> importUser(HttpServletRequest request) {
+        Map<String, Object> returnMap = new HashMap<>();
+        int success = 0;
+        try {
+            InputStream is = request.getInputStream();
+            HashMap<String, Object> map = ImportExcel.readExcelToList(is, 0);
+            List<Map<Integer, String>> StdMapList =
+                    (ArrayList<Map<Integer, String>>) map.get("datalist");
+            List<SSFStudentIdCard> stuList = new ArrayList<SSFStudentIdCard>();
+            for (Map<Integer, String> stdMap : StdMapList) {
+                SSFStudentIdCard std = new SSFStudentIdCard();
+                std.setStudentno(stdMap.get(0) == null ? null : stdMap.get(0).toString());
+                std.setUsername(stdMap.get(1) == null ? null : stdMap.get(1).toString());
+                std.setIdcard(stdMap.get(2) == null ? null : stdMap.get(2).toString());
+                stuList.add(std);
+            }
+
+            sSFStudentIdCardMapper.insertBatch(stuList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return returnMap;
+    }
+
+    /**
+     * 转换信息
+     * 
+     * @param listInfo
+     * @return
+     */
+    @Override
+    public List<UserInfo> transformList(List<UserInfo> listInfo) {
+        List<UserInfo> userlist = new ArrayList<UserInfo>();
+        listInfo.stream().forEach(user -> {
+            user.setGender(user.getGender()==null?"":user.getGender().equals("1") ? "男" : "女");
+            user.setUserrole(CommonUtil.getUserNameById(user.getUserrole()));
+            userlist.add(user);
+        });
+        return userlist;
+    }
+
+    @Override
+    public int updateByPrimaryKey(UserInfo userInfo) {
+        return userInfoMapper.updateByPrimaryKey(userInfo);
+    }
+
+
+
+}

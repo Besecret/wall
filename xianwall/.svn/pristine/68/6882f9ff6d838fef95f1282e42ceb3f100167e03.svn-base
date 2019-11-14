@@ -1,0 +1,52 @@
+package com.wanding.comm;
+
+public class Constant {
+
+	public static String DEFAULT_CHARSET = "UTF-8";
+
+	public static String DOMAIN = "weixin.weupay.com";// weixin.weupay.com#test.weupay.cn
+
+	// public static String APPSECRET ="871a084f8994a5754d2e3c80cd2b3da2";
+//	 public static String APPSECRET ="f8eb10ed99c7b84aa4b395fb6ece640a";//金华
+//	public static String APPSECRET = "8bd468cc556558fe8dc89a95e0f64abc";// tiny
+	public static String APPSECRET = "3eef26661ccb0cec9fa9a4d9609464af";// 万鼎城墙
+
+	public final static String SCCUESS_CODE = "000000";
+
+	public final static String ERROR_CODE = "10000";
+
+	public final static String TIME_OUT_CODE = "11111";
+
+	public final static String ABNORMAL_CODE = "10001";
+
+	public final static String SUCCESS_MESSAGE = "SUCCESS";
+
+	public final static String ERROR_MESSAGE = "ERROR";
+
+//	public static final String MERCHANTNO = "1001307";
+//	public static final String TERMINALID = "12975";
+	public static final String MERCHANTNO = "1000534";
+	public static final String TERMINALID = "12768";
+	/**
+	 * check uncheck
+	 */
+	public static String STATUS_UNCHECK = "0";
+
+	/**
+	 * check pass
+	 */
+	public static String STATUS_PASS = "1";
+
+	/**
+	 * check refuse
+	 */
+	public static String STATUS_REFUSE = "3";
+
+	// TODO
+	public static String PAY_DOMAIN = "https://pay.wandingkeji.cn";
+	// public static String PAY_DOMAIN = "http://127.0.0.1:8080";
+
+	// TODO
+	public static String PAY_PORT = "";
+
+}

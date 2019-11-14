@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanding.dao.UserInfoCheckMapper">
+
+  <resultMap id="UserResultMap" type="com.wanding.model.UserInfo">
+    <id column="userId" jdbcType="INTEGER" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="realname" jdbcType="VARCHAR" property="realname" />
+    <result column="userage" jdbcType="VARCHAR" property="userage" />
+    <result column="gender" jdbcType="INTEGER" property="gender" />
+    <result column="usertel" jdbcType="VARCHAR" property="usertel" />
+    <result column="idcard" jdbcType="VARCHAR" property="idcard" />
+    <result column="userrole" jdbcType="VARCHAR" property="userrole" />
+    <result column="user_create_time" jdbcType="TIMESTAMP" property="createdtime" />
+    <result column="user_update_time" jdbcType="TIMESTAMP" property="updatedtime" />
+    <result column="addition1" jdbcType="VARCHAR" property="addition1" />
+    <result column="addition2" jdbcType="VARCHAR" property="addition2" />
+    <result column="addition3" jdbcType="VARCHAR" property="addition3" />
+  </resultMap>
+
+
+  <resultMap id="BaseResultMap" type="com.wanding.model.UserInfoCheck">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="UserId" jdbcType="INTEGER" property="userid" />
+    <result column="CreatedTime" jdbcType="TIMESTAMP" property="createdtime" />
+    <result column="IdCardFrontDoc" jdbcType="VARCHAR" property="idcardfrontdoc" />
+    <result column="IdCardBackDoc" jdbcType="VARCHAR" property="idcardbackdoc" />
+    <result column="AttachDoc" jdbcType="VARCHAR" property="attachdoc" />
+    <result column="CheckUser" jdbcType="VARCHAR" property="checkuser" />
+    <result column="CheckTime" jdbcType="TIMESTAMP" property="checktime" />
+    <result column="AttachType" jdbcType="VARCHAR" property="attachtype" />
+    <result column="Status" jdbcType="CHAR" property="status" />
+    <result column="Remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="UpdatedBy" jdbcType="INTEGER" property="updatedby" />
+    <result column="UpdatedTime" jdbcType="TIMESTAMP" property="updatedtime" />
+    <result column="user_addtion1" jdbcType="VARCHAR" property="addition1" />
+    <result column="user_addtion2" jdbcType="VARCHAR" property="addition2" />
+    <result column="user_addtion3" jdbcType="VARCHAR" property="addition3" />
+  	<association property="user" javaType="com.wanding.model.UserInfo" resultMap="UserResultMap"/>  
+  </resultMap>
+  
+
+  
+  <sql id="User_Column_List">
+    userinfo.ID ,username,realname,userage,gender,
+	usertel,idcard,userrole,userinfo.createdtime ,userinfo.updatedtime ,userinfo.addition1 ,
+	userinfo.addition2 ,userinfo.addition3 ,
+  </sql>
+ 
+  
+  <sql id="Base_Column_List">
+    userinfocheck.ID, UserId, userinfocheck.CreatedTime, IdCardFrontDoc, IdCardBackDoc, AttachDoc, CheckUser, CheckTime, 
+    AttachType, Status, Remarks, UpdatedBy, userinfocheck.UpdatedTime,userinfocheck.Addition1,
+	userinfocheck.Addition2,
+	userinfocheck.Addition3 
+  </sql>
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from userinfocheck
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from userinfocheck
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+   <delete id="deleteCheckInfoByUserId" parameterType="java.lang.Integer">
+    delete from userinfocheck
+    where UserId = #{userId,jdbcType=INTEGER}
+  </delete>
+  
+  
+  <insert id="insert" parameterType="com.wanding.model.UserInfoCheck">
+    insert into userinfocheck (ID, UserId, CreatedTime, 
+      IdCardFrontDoc, IdCardBackDoc, AttachDoc, 
+      CheckUser, CheckTime, AttachType, 
+      Status, Remarks, UpdatedBy, 
+      UpdatedTime, Addition1, Addition2, 
+      Addition3)
+    values (#{id,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{createdtime,jdbcType=TIMESTAMP}, 
+      #{idcardfrontdoc,jdbcType=VARCHAR}, #{idcardbackdoc,jdbcType=VARCHAR}, #{attachdoc,jdbcType=VARCHAR}, 
+      #{checkuser,jdbcType=VARCHAR}, #{checktime,jdbcType=TIMESTAMP}, #{attachtype,jdbcType=VARCHAR}, 
+      #{status,jdbcType=CHAR}, #{remarks,jdbcType=VARCHAR}, #{updatedby,jdbcType=INTEGER}, 
+      #{updatedtime,jdbcType=TIMESTAMP}, #{addition1,jdbcType=VARCHAR}, #{addition2,jdbcType=VARCHAR}, 
+      #{addition3,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wanding.model.UserInfoCheck"  useGeneratedKeys="true"  keyProperty="id">
+    insert into userinfocheck
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="userid != null">
+        UserId,
+      </if>
+      <if test="createdtime != null">
+        CreatedTime,
+      </if>
+      <if test="idcardfrontdoc != null">
+        IdCardFrontDoc,
+      </if>
+      <if test="idcardbackdoc != null">
+        IdCardBackDoc,
+      </if>
+      <if test="attachdoc != null">
+        AttachDoc,
+      </if>
+      <if test="checkuser != null">
+        CheckUser,
+      </if>
+      <if test="checktime != null">
+        CheckTime,
+      </if>
+      <if test="attachtype != null">
+        AttachType,
+      </if>
+      <if test="status != null">
+        Status,
+      </if>
+      <if test="remarks != null">
+        Remarks,
+      </if>
+      <if test="updatedby != null">
+        UpdatedBy,
+      </if>
+      <if test="updatedtime != null">
+        UpdatedTime,
+      </if>
+      <if test="addition1 != null">
+        Addition1,
+      </if>
+      <if test="addition2 != null">
+        Addition2,
+      </if>
+      <if test="addition3 != null">
+        Addition3,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="createdtime != null">
+        #{createdtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="idcardfrontdoc != null">
+        #{idcardfrontdoc,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardbackdoc != null">
+        #{idcardbackdoc,jdbcType=VARCHAR},
+      </if>
+      <if test="attachdoc != null">
+        #{attachdoc,jdbcType=VARCHAR},
+      </if>
+      <if test="checkuser != null">
+        #{checkuser,jdbcType=VARCHAR},
+      </if>
+      <if test="checktime != null">
+        #{checktime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="attachtype != null">
+        #{attachtype,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedby != null">
+        #{updatedby,jdbcType=INTEGER},
+      </if>
+      <if test="updatedtime != null">
+        #{updatedtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addition1 != null">
+        #{addition1,jdbcType=VARCHAR},
+      </if>
+      <if test="addition2 != null">
+        #{addition2,jdbcType=VARCHAR},
+      </if>
+      <if test="addition3 != null">
+        #{addition3,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wanding.model.UserInfoCheck">
+    update userinfocheck
+    <set>
+      <if test="userid != null">
+        UserId = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="createdtime != null">
+        CreatedTime = #{createdtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="idcardfrontdoc != null">
+        IdCardFrontDoc = #{idcardfrontdoc,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardbackdoc != null">
+        IdCardBackDoc = #{idcardbackdoc,jdbcType=VARCHAR},
+      </if>
+      <if test="attachdoc != null">
+        AttachDoc = #{attachdoc,jdbcType=VARCHAR},
+      </if>
+      <if test="checkuser != null">
+        CheckUser = #{checkuser,jdbcType=VARCHAR},
+      </if>
+      <if test="checktime != null">
+        CheckTime = #{checktime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="attachtype != null">
+        AttachType = #{attachtype,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        Status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="remarks != null">
+        Remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedby != null">
+        UpdatedBy = #{updatedby,jdbcType=INTEGER},
+      </if>
+      <if test="updatedtime != null">
+        UpdatedTime = #{updatedtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addition1 != null">
+        Addition1 = #{addition1,jdbcType=VARCHAR},
+      </if>
+      <if test="addition2 != null">
+        Addition2 = #{addition2,jdbcType=VARCHAR},
+      </if>
+      <if test="addition3 != null">
+        Addition3 = #{addition3,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wanding.model.UserInfoCheck">
+    update userinfocheck
+    set UserId = #{userid,jdbcType=INTEGER},
+      CreatedTime = #{createdtime,jdbcType=TIMESTAMP},
+      IdCardFrontDoc = #{idcardfrontdoc,jdbcType=VARCHAR},
+      IdCardBackDoc = #{idcardbackdoc,jdbcType=VARCHAR},
+      AttachDoc = #{attachdoc,jdbcType=VARCHAR},
+      CheckUser = #{checkuser,jdbcType=VARCHAR},
+      CheckTime = #{checktime,jdbcType=TIMESTAMP},
+      AttachType = #{attachtype,jdbcType=VARCHAR},
+      Status = #{status,jdbcType=CHAR},
+      Remarks = #{remarks,jdbcType=VARCHAR},
+      UpdatedBy = #{updatedby,jdbcType=INTEGER},
+      UpdatedTime = #{updatedtime,jdbcType=TIMESTAMP},
+      Addition1 = #{addition1,jdbcType=VARCHAR},
+      Addition2 = #{addition2,jdbcType=VARCHAR},
+      Addition3 = #{addition3,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="findByUserId" parameterType="Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from userinfocheck
+    where UserId  = #{userid,jdbcType=INTEGER}
+  </select>
+  <select id="findAllUserInfoCheck" parameterType="com.wanding.model.UserInfoCheck" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from userinfocheck
+    <where>
+     <if test="CheckUser != null">
+         and  CheckUser = #{checkuser,jdbcType=VARCHAR}
+     </if>
+     <if test="CheckUser != null">
+          Status = #{status,jdbcType=CHAR}
+     </if>
+    </where>
+  </select>
+  
+  <select id="queryAllCheckInfo" resultMap="BaseResultMap">
+  	select 
+    	<include refid="User_Column_List" />
+    	<include refid="Base_Column_List" />
+    from userinfo ,userinfocheck 
+   	where userinfocheck.UserId = userinfo.ID
+  </select>
+  
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanding.dao.SSFStudentIdCardMapper">
+  
+  <sql id="Base_Column_List">
+    id, idCard
+  </sql>
+  
+  
+  <select id="findstudentCountByIdCard" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select  count(1)   from ssfstudentidcard where idCard = #{idCard,jdbcType=VARCHAR}
+  </select>
+  
+  
+   <insert id="insertBatch" parameterType="java.util.List">
+      insert into ssfstudentidcard (studentno, idcard, username)  values
+    <foreach collection="list" item="model" index="index" separator=",">
+       (#{model.studentno,jdbcType=VARCHAR}, #{model.idcard,jdbcType=VARCHAR}, #{model.username,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+</mapper>

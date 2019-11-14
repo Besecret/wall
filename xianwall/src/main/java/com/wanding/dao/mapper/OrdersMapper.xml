@@ -313,7 +313,7 @@
 		#{addition3,jdbcType=VARCHAR}
 		where ID = #{id,jdbcType=INTEGER}
 	</update>
-	<select id="selectByOutTradeNo" resultType="com.wanding.model.Orders">
+	<select id="selectByOutTradeNo" resultMap="BaseResultMap">
 		select * from orders 
 		where  out_trade_no = #{outNo}
 	</select>

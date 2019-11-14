@@ -1,0 +1,185 @@
+package com.wanding.controller;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.wanding.model.UserInfo;
+import com.wanding.model.UserInfoCheck;
+import com.wanding.model.UserInfoVo;
+import com.wanding.service.UserInfoCheckService;
+import com.wanding.service.UserInfoService;
+import com.wanding.util.DateFormatUtil;
+import com.wanding.util.IDCardUtil;
+import com.wanding.util.JsonResponse;
+
+@RestController
+@RequestMapping(value = "/api/user")
+public class UserInfoController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserInfoController.class);
+
+	
+	
+    @Autowired
+    private UserInfoService userInfoService;
+    @Autowired
+    private UserInfoCheckService userInfoCheckService;
+	 /**
+		 * 总后台小程序登陆流程
+		 * 1.初始化 :通过code获取openid sessionid等
+		 * 2.获取粉丝信息存到粉丝表中
+		 * 3.判断用户是否存在登录权限
+		 */
+	//用户登录
+    @PostMapping(value = "/login")
+    public Object login(HttpServletRequest request, @RequestBody String param){
+		LOGGER.info("login start ... param- : " + param);
+    	try {
+    		if(param==null) {
+    			return JsonResponse.failure("传入参数为空！");
+    		}
+    		
+    		UserInfo uerInfo =userInfoService.jscodeToSession(param);
+    		if(uerInfo==null) {
+    			return JsonResponse.failure("微信登录接口返回数据为空！");
+    		}
+    		request.getSession().setAttribute("user", uerInfo);
+    		JSONObject json = new JSONObject();
+    		json.put("userinfo",uerInfo);
+    		System.out.println(json.toString());
+			return  JsonResponse.success("登录成功！", json);
+		} catch (Exception e) {
+			LOGGER.error("login error", e);
+			return JsonResponse.failure("login error");
+		}
+    }    
+    
+ 
+    
+    //用户信息维护
+    @PostMapping(value = "/fans")
+    public Object fans(HttpServletRequest request,@RequestBody String param){
+    		Map<String, Object> returnMap = new HashMap<String, Object>();
+    		try {
+    			UserInfoVo userinfovo = JSON.parseObject(param, UserInfoVo.class);
+        		if(userInfoService.findUserInfoBySession(userinfovo.getSession())!=null){
+        			return JsonResponse.failure("session已过期！");
+        		}
+    			LOGGER.info("sessionId====="+userinfovo.getSession());
+ 
+    			returnMap = userInfoService.miniFans(userinfovo);
+    		} catch (Exception e) {
+    			return JsonResponse.failure("用户信息失败");
+    		}
+			LOGGER.info("miniFansMap======2="+returnMap);
+    		return JsonResponse.success("成功");
+    }
+    
+    
+    //用户注册
+    @PostMapping(value = "/regist")
+    public Object regist(HttpServletRequest request,@RequestBody  String param){
+		LOGGER.info("=====regist====start==" + System.currentTimeMillis());
+    	try {
+    		UserInfo userinfo = JSON.parseObject(param, UserInfo.class);
+    		if(userInfoService.findUserInfoBySession(userinfo.getSession())!=null){
+    			return JsonResponse.failure("此用户已经注册！");
+    		}
+    		
+    		if(!IDCardUtil.isValid(userinfo.getIdcard())) {
+    			return JsonResponse.failure("身份证输入不合法！");
+    		}
+    		
+    		userinfo.setCreatedtime(new Date(System.currentTimeMillis()));
+    		userinfo.setUpdatedtime(new Date(System.currentTimeMillis()));
+    		System.out.println(DateFormatUtil.format(userinfo.getCreatedtime(), DateFormatUtil.FORMATDATETIME));
+    		userInfoService.addUserInfo(userinfo);
+    	    JSONObject json = new JSONObject();	
+    	    json.put("userinfo",userInfoService.findUserInfoByOpenId(userinfo.getOpenId()));
+    		return JsonResponse.success("注册成功！",json);
+		} catch (Exception e) {
+			LOGGER.error("param parse data error", e);
+			return JsonResponse.failure("param parse data error！");
+		}
+    }
+
+    	
+    	
+    	 //修改用户
+        @PostMapping(value = "/update")
+        public Object update(HttpServletRequest request,@RequestBody  String param){
+    		LOGGER.info("=====update====start==" + System.currentTimeMillis());
+        	try {
+        		UserInfo userinfo = JSON.parseObject(param, UserInfo.class);
+        		if(userInfoService.findUserInfoBySession(userinfo.getSession())!=null){
+        			return JsonResponse.failure("session已过期！");
+        		}
+        		userinfo.setUpdatedtime(new Date(System.currentTimeMillis()));
+        		userInfoService.updateUserInfo(userinfo);
+        		JSONObject json = new JSONObject();	
+        	    json.put("userinfo",userInfoService.findUserInfoByOpenId(userinfo.getOpenId()));
+        		return JsonResponse.success("修改成功！",json);
+
+    		} catch (Exception e) {
+    			LOGGER.error("param parse data error", e);
+    			return JsonResponse.failure("param parse data error！");
+    		}          
+        }
+
+         //获取用户
+        @GetMapping(value = "/getUser")
+        public Object getUser(HttpServletRequest request,@RequestBody  String param){
+    		LOGGER.info("=====getUser====start==" + System.currentTimeMillis());
+        	try {
+        		UserInfo userinfo =  JSON.parseObject(param, UserInfo.class);
+        		UserInfo userInfo  = userInfoService.findUserInfoBySession(userinfo.getSession());
+        	     
+        		if(userInfo==null){
+        			return JsonResponse.failure("session已过期！");
+        		}
+          		JSONObject json = new JSONObject();	
+        	    json.put("userinfo",userInfo);
+        		return JsonResponse.success("查询成功",json);
+    		} catch (Exception e) {
+    			LOGGER.error("param parse data error", e);
+    			return JsonResponse.failure("param parse data error！");
+    		}
+        }
+        
+        //获取用户审核信息
+        @PostMapping(value = "/getUserInfoCheck")
+        public Object getUserInfoCheck(HttpServletRequest request,@RequestBody  String param){
+    		LOGGER.info("=====userInfoCheck====start==" + System.currentTimeMillis());  
+        	try {
+        		UserInfo session =  JSON.parseObject(param, UserInfo.class);
+        		UserInfo userInfo  = userInfoService.findUserInfoBySession(session.getSession());
+        		if(userInfo==null){
+        			return JsonResponse.failure("session已过期！");
+        		}
+        		UserInfoCheck userInfoCheck =userInfoCheckService.findByUserId(userInfo.getId());
+        		if(userInfoCheck==null){
+        			return JsonResponse.failure("未查到此用户审核信息");
+        		}        		
+        		JSONObject json = new JSONObject();	
+        	    json.put("userInfoCheck",userInfoCheck);
+        		return JsonResponse.success("查询成功",json);
+    		} catch (Exception e) {
+    			LOGGER.error("param parse data error", e);
+    			return JsonResponse.failure("param parse data error！");
+    		}
+        }
+}

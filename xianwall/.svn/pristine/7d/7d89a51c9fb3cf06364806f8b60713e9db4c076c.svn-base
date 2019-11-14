@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanding.dao.CardUseRecordInfoMapper">
+	<resultMap id="BaseResultMap" type="com.wanding.model.CardUseRecordInfo">
+		<id column="ID" jdbcType="INTEGER" property="id" />
+		<result column="CardId" jdbcType="INTEGER" property="cardid" />
+		<result column="UseTime" jdbcType="TIMESTAMP" property="usetime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CardId, UseTime
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from carduserecordinfo
+		where ID = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		carduserecordinfo
+		where ID = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.wanding.model.CardUseRecordInfo">
+		insert into carduserecordinfo
+		( CardId, UseTime
+		)
+		values (
+		#{cardid,jdbcType=INTEGER},
+		#{usetime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.wanding.model.CardUseRecordInfo">
+		insert into carduserecordinfo
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="cardid != null">
+				CardId,
+			</if>
+			<if test="usetime != null">
+				UseTime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="cardid != null">
+				#{cardid,jdbcType=INTEGER},
+			</if>
+			<if test="usetime != null">
+				#{usetime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.wanding.model.CardUseRecordInfo">
+		update carduserecordinfo
+		<set>
+			<if test="cardid != null">
+				CardId = #{cardid,jdbcType=INTEGER},
+			</if>
+			<if test="usetime != null">
+				UseTime = #{usetime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.wanding.model.CardUseRecordInfo">
+		update
+		carduserecordinfo
+		set CardId = #{cardid,jdbcType=INTEGER},
+		UseTime =
+		#{usetime,jdbcType=TIMESTAMP}
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="queryRecordByUser" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select
+		record.*,card.userid,card.InvalidTime,card.createdtime,card.FirstUseTime  from
+		CardUseRecordInfo record
+		left join UserCardInfo card
+		on record.CardId=
+		card.id
+		<if test="userId != null ">
+			and card.userid = ${userId}
+		</if>
+	</select>
+  
+  
+  <select id="queryCardRecordByCardId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from carduserecordinfo
+    where CardId = #{CardId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="queryAllCardRecord"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from carduserecordinfo
+  </select>
+  
+  
+  
+</mapper>

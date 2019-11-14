@@ -1,0 +1,42 @@
+package com.wanding.comm;
+
+public class Constant {
+
+    public static String DEFAULT_CHARSET = "UTF-8";
+
+    public static String DOMAIN = "weixin.weupay.com";// weixin.weupay.com#test.weupay.cn
+
+    public static String APPSECRET ="871a084f8994a5754d2e3c80cd2b3da2";
+            
+
+    public final static String SCCUESS_CODE = "000000";
+
+    public final static String ERROR_CODE = "10000";
+
+    public final static String SUCCESS_MESSAGE = "SUCCESS";
+
+    public final static String ERROR_MESSAGE = "ERROR";
+    
+    /**
+     * check uncheck
+     */
+    public static String STATUS_UNCHECK = "0";
+
+    /**
+     * check pass
+     */
+    public static String STATUS_PASS = "1";
+
+    /**
+     * check refuse
+     */
+    public static String STATUS_REFUSE = "3";
+
+
+	// TODO
+	public static String PAY_DOMAIN = "";
+
+	// TODO
+	public static String PAY_PORT = "";
+
+}

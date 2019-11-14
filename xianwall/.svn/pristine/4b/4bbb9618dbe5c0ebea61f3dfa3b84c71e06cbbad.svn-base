@@ -1,0 +1,141 @@
+package com.wanding.controller;
+
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.thymeleaf.util.StringUtils;
+import com.alibaba.fastjson.JSONObject;
+import com.wanding.model.UserInfo;
+import com.wanding.service.UserInfoService;
+import com.wanding.util.JsonResponse;
+
+/**
+ * Controller 收集信息
+ * 
+ * @author wang.dong
+ *
+ */
+@Controller
+@RequestMapping("/user")
+public class UserController {
+
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+
+
+
+    @Autowired
+    private UserInfoService userService;
+
+
+    /**
+     * userInfo 用户信息
+     * 
+     * @param <T>
+     */
+    @PostMapping("userInfo")
+    @ResponseBody
+    public  Object queryUserInfo(@RequestBody Map<String, Object> param) {
+
+        log.info(" --- collect userinfo  ---");
+        try {
+
+            Map<String,Object> userMap =  userService
+                    .queryUserInfoByPaging(Integer.parseInt(param.get("pageNum").toString()),
+                            Integer.parseInt(param.get("pageSize").toString()));
+            // filter role ,name
+            String roleType = param.get("roleType")==null?"":param.get("roleType").toString();
+            String name = param.get("name")==null?"":param.get("name").toString();
+            log.info("roleType is :"+ roleType+ "name is :"+name);
+            @SuppressWarnings("unchecked")
+            List<UserInfo> userList = (List<UserInfo>) userMap.get("data");
+            userList = filterUserInfoByRole(roleType, userList);
+            userList = filterUserInfoByName(name, userList);
+            //前台展示
+            userList = userService.transformList(userList);
+            JSONObject json = new JSONObject();
+            json.put("userList", userList);
+            json.put("total", userMap.get("total"));
+            log.info("json :" +json);
+            return JsonResponse.success("获取用户信息成功！",json);
+        } catch (Exception e) {
+            log.error(" Function queryUserInfo: collect userinfo fail!");
+            return JsonResponse.failure(" check all user fail");
+
+        }
+    }
+
+
+
+    /**
+     * 导入身份信息
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/importUser")
+    public @ResponseBody Object importUser(HttpServletRequest request) {
+        Map<String, Object> returnMap = new HashMap<>();
+        try {
+            returnMap = userService.importUser(request);
+            if("100000".equals((String)returnMap.get("subCode"))){
+                return JsonResponse.failure((String)returnMap.get("subMsg"));
+            }
+        }catch (Exception e){
+            log.error("导入异常!");
+            log.error(ExceptionUtils.getStackTrace(e));
+            return JsonResponse.failure((String)returnMap.get("subMsg"));
+        }
+        return  JsonResponse.success((String)returnMap.get("subMsg"),returnMap);
+    }
+
+    
+    
+    
+    /**
+     * filter userList by name
+     * 
+     * @param name
+     * @param userList
+     * @return userList
+     */
+    private List<UserInfo> filterUserInfoByName(String name, List<UserInfo> userList) {
+
+        if (StringUtils.isEmpty(name)) {
+            return userList;
+        }
+        return userList.stream().filter(user -> user.getRealname().contains(name))
+                .collect(Collectors.toList());
+
+    }
+
+    /**
+     * filter userList by role
+     * 
+     * @param role
+     * @param userList
+     * @return userList
+     */
+    private List<UserInfo> filterUserInfoByRole(String role, List<UserInfo> userList) {
+
+        if (StringUtils.isEmpty(role)) {
+            return userList;
+        }
+        return userList.stream().filter(user -> user.getUserrole().equals(role))
+                .collect(Collectors.toList());
+    }
+
+
+}

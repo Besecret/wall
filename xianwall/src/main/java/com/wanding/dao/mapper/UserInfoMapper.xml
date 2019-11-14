@@ -14,10 +14,13 @@
     <result column="updatedtime" jdbcType="TIMESTAMP" property="updatedtime" />
     <result column="openid" jdbcType="VARCHAR" property="openId" />
     <result column="appid" jdbcType="VARCHAR" property="appId" />
+    <result column="session" jdbcType="VARCHAR" property="session" />
+    <result column="sessionkey" jdbcType="VARCHAR" property="sessionkey" />
+    <result column="unionid" jdbcType="VARCHAR" property="unionid" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, username, realname, userage, gender, usertel, idcard, userrole, createdtime, 
-    updatedtime, openId,appId,addition1, addition2, addition3
+    userinfo.ID, userinfo.username, userinfo.realname, userinfo.userage, userinfo.gender, userinfo.usertel, userinfo.idcard, userinfo.userrole, userinfo.createdtime,
+    userinfo.updatedtime, userinfo.openId,userinfo.appId,userinfo.addition1, userinfo.addition2, userinfo.addition3
   </sql>
   <select id="findUserInfoByOpenId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -85,6 +88,20 @@
       <if test="password != null">
         password,
       </if>
+      <if test="session != null">
+        session,
+      </if>
+      <if test="sessionkey != null">
+       sessionkey,
+      </if>
+      <if test="unionid != null">
+        unionid,
+      </if>
+      <if test="expiresTime != null">
+        expiresTime,
+      </if>
+      
+      
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -126,6 +143,18 @@
       <if test="password != null">
         #{password,jdbcType=VARCHAR},
       </if>
+      <if test="session != null">
+        #{session,jdbcType=VARCHAR},
+      </if>
+      <if test="sessionkey != null">
+        #{sessionkey,jdbcType=VARCHAR},
+      </if>
+      <if test="unionid != null">
+        #{unionid,jdbcType=VARCHAR},
+      </if>
+      <if test="expiresTime != null">
+        #{expiresTime,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
   
@@ -156,9 +185,39 @@
       <if test="updatedtime != null">
         updatedtime = #{updatedtime,jdbcType=TIMESTAMP},
       </if>
-      
+      <if test="session != null">
+        session = #{session,jdbcType=VARCHAR},
+      </if>
+      <if test="sessionkey != null">
+        sessionkey = #{sessionkey,jdbcType=VARCHAR},
+      </if>
+      <if test="unionid != null">
+        unionid = #{unionid,jdbcType=VARCHAR},
+      </if>
+      <if test="expiresTime != null">
+        expiresTime = #{expiresTime,jdbcType=INTEGER},
+      </if>
     </set>
-    where OpenId = #{openId,jdbcType=VARCHAR}
+    where openId = #{openId,jdbcType=VARCHAR}
+  </update>
+  
+ <update id="updateUserInfobysession" parameterType="com.wanding.model.UserInfo">
+    update userinfo
+    <set>
+      <if test="realname != null">
+        realname = #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="idcard != null">
+        idcard = #{idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="userrole != null">
+        userrole = #{userrole,jdbcType=VARCHAR},
+      </if>
+      <if test="usertel != null">
+        usertel = #{usertel,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where session = #{session,jdbcType=VARCHAR}
   </update>
 
 
@@ -175,25 +234,57 @@
       updatedtime = #{updatedtime,jdbcType=TIMESTAMP},
       addition1 = #{addition1,jdbcType=VARCHAR},
       addition2 = #{addition2,jdbcType=VARCHAR},
-      addition3 = #{addition3,jdbcType=VARCHAR}
+      addition3 = #{addition3,jdbcType=VARCHAR},
+      session = #{session,jdbcType=VARCHAR},
+      sessionkey = #{sessionkey,jdbcType=VARCHAR},
+      expiresTime = #{expiresTime,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=INTEGER}
   </update>
 
 
   <select id="findAllUserInfo"  resultMap="BaseResultMap">
-    select  <include refid="Base_Column_List" />  from userinfo
+    select  <include refid="Base_Column_List" />  from userinfo,userinfocheck
+    WHERE userinfo.ID = userinfocheck.UserId
+    AND userinfocheck.`Status` ='1'
+    ORDER BY userinfo.createdtime DESC
   </select>
-  
+
+
+  <select id="findAllManageInfo"  resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" />  from userinfo
+    WHERE userinfo.userrole ='admin'
+    ORDER BY createdtime DESC;
+  </select>
+
+
   <select id="findUserByUsername"  parameterType="java.lang.String" resultType="com.wanding.model.UserInfo">
     select  *  from userinfo where userrole='admin' and  username =#{username,jdbcType=VARCHAR}
   </select>
+
+
+
+  <select id="findUserByRealName"  parameterType="java.lang.String" resultType="java.lang.Integer">
+    select  count(*)  from userinfo where userrole='admin' and  realname =#{username,jdbcType=VARCHAR}
+  </select>
+
+
+  <select id="findUserByUserId"  parameterType="java.lang.Integer" resultType="com.wanding.model.UserInfo">
+    select  *  from userinfo where ID =#{userId,jdbcType=VARCHAR}
+  </select>
+
    <select id="modifyPwd"  parameterType="com.wanding.model.UserInfo">
     update userinfo set password=#{password,jdbcType=VARCHAR} where id=#{id}
   </select>
   
+  <select id="findBySession"  parameterType="String" resultType="com.wanding.model.UserInfo">
+    select * from userinfo  where session=#{session}
+  </select>
   
   
+  <update id="clearExpiresSession" >
+       update userinfo  set session = null  where  <![CDATA[ expiresTime < unix_timestamp(now()) ]]>
+  </update>
   
-  
-  
+ 
 </mapper>

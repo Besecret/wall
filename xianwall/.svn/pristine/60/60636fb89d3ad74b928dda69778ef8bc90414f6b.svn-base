@@ -1,0 +1,125 @@
+package com.wanding.controller;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.wanding.dao.UserInfoMapper;
+import com.wanding.model.Orders;
+import com.wanding.model.UserCardInfo;
+import com.wanding.model.UserInfo;
+import com.wanding.model.UserInfoCheck;
+import com.wanding.service.CardService;
+import com.wanding.service.OrderService;
+import com.wanding.service.UserInfoCheckService;
+import com.wanding.util.JsonResponse;
+
+@RestController
+@RequestMapping("/order")
+public class OrderController {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
+	@Autowired
+	private CardService cardService;
+
+	@Autowired
+	private OrderService orderService;
+	@Autowired
+	private UserInfoCheckService checkService;
+	@Autowired
+	private UserInfoMapper userMapper;
+	
+	@PostMapping("/create")
+	public Map<String, Object> createOrder(HttpServletRequest req, HttpServletResponse res,
+			@RequestBody() Map<String, Object> param) {
+
+		LOGGER.info("create order start ... param : " + param);
+		String header = req.getHeader("sessionKey");
+		// 创建订单
+		// 调用支付
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			UserInfo user = (UserInfo) req.getSession().getAttribute("user");
+			if(user == null){
+				user = userMapper.findBySession(header);
+			}
+			param.put("user", user);
+			param.put("openId", user.getOpenId());
+			
+			//判断是否还有年卡
+			boolean hasCard = cardService.hasCard(user.getId());
+			if(!hasCard){
+				LOGGER.info("already have one");
+	    		return JsonResponse.failure("已经有生效的惠民卡，");
+			}
+			
+			UserInfoCheck checkInfo = checkService.findByUserId(user.getId());
+			if (checkInfo == null) {
+				LOGGER.info("Personal information is not check");
+	    		return JsonResponse.failure("个人信息未提交审核！");
+			}else if ("0".equals(checkInfo.getStatus())) {
+				LOGGER.info("Personal information is checking");
+	    		return JsonResponse.failure("个人信息审核中！");
+			} else if ("1".equals(checkInfo.getStatus())) {
+				Orders order = orderService.create(param, user);
+				LOGGER.info("applet pay start ...");
+				result = orderService.doPayWithWD(order, param);
+				
+			} else if ("3".equals(checkInfo.getStatus())) {
+				LOGGER.info("Personal information check refused");
+	    		return JsonResponse.failure("个人信息审核拒绝！");
+			}else{
+				LOGGER.info("Personal information check status : " + checkInfo.getStatus());
+	    		return JsonResponse.failure("个人信息审核状态异常！");
+			}
+		} catch (Exception e) {
+			LOGGER.error("create Order error", e);
+    		return JsonResponse.failure("交易失败！");
+
+		}
+		return JsonResponse.success("交易成功！", result);
+	}
+
+	@PostMapping("/update")
+	public Map<String, Object> updateOrder(HttpServletRequest req, HttpServletResponse res, @RequestBody() Map<String, Object> param) {
+
+		return updateOrderT(param);
+	}
+
+	private Map<String, Object> updateOrderT(Map<String, Object> param) {
+		LOGGER.info("update order status start ... param : " + param.toString());
+		try {
+
+ 			if ("01".equals(param.get("return_code"))) {
+				LOGGER.info("applet pay success");
+				UserCardInfo createCard = cardService.createCard(param);
+				param.put("cardId", createCard.getAddition2());
+				LOGGER.info("create huimin card success");
+			} else if ("00".equals(param.get("return_code"))) {
+				LOGGER.error(param.get("return_msg").toString());
+			} else {
+				LOGGER.error("unknow error >>>>>");
+				return JsonResponse.failure("unknow error >>>>>");
+			}
+			orderService.updateOrder(param);
+			LOGGER.error("update order finish ...");
+		} catch (Exception e) {
+			LOGGER.error("errors in update order or create card ", e);
+			return JsonResponse.failure("errors in update order or create card ");
+
+		}
+		Map<String, Object> success = JsonResponse.success("update order finish ...！");
+		success.put("return_code", "01");
+		return success;
+	}
+}

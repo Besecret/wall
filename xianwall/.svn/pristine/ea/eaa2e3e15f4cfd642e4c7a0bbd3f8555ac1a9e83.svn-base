@@ -1,0 +1,5 @@
+image.imageuploadpath=/data/upload/image/
+#image.imagereadpath=http://localhost:9443/xianwall/images/readImage?fileName=
+image.imagereadpath=https://devpay.wandingkeji.cn/xianwall/images/readImage?fileName=
+image.imageType=PNG,JPG,JPEG
+image.imageSize=4194304

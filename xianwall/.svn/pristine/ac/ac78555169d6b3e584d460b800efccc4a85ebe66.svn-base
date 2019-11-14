@@ -1,0 +1,2 @@
+exclude=/static/**,/**/*.html,/error,/api/user/login,/order/update,/images/readImage,/user/userInfo,/user/importUser,/index/**,/check/**,/login/**,/member/**
+add=/**

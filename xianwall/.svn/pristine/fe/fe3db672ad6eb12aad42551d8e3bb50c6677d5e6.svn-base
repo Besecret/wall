@@ -1,0 +1,19 @@
+package com.wanding.service;
+
+import java.util.Map;
+
+import com.wanding.model.UserCardInfo;
+
+public interface CardService {
+
+	UserCardInfo createCard(Map<String, Object> param);
+
+	Map<String, Object> activateCard(Map<String, Object> param);
+
+	Map<String, Object> useRecord(Map<String, Object> param);
+
+	Map<String, Object> createCardRecord(Map<String, Object> param);
+
+	boolean isActive(Map<String, Object> param);
+
+}

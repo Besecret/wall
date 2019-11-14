@@ -1,0 +1,110 @@
+package com.wanding.controller;
+
+
+import com.alibaba.fastjson.JSONObject;
+import com.wanding.model.UserCardInfo;
+import com.wanding.service.CardInfoService;
+import com.wanding.util.JsonResponse;
+import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.thymeleaf.util.StringUtils;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+
+/**
+ * member info PC端
+ *
+ * @author wang.dong
+ */
+@Controller
+@RequestMapping("/member")
+public class CarController {
+
+    @Autowired
+    private CardInfoService cardService;
+
+    private static final Logger log = LoggerFactory.getLogger(CarController.class);
+
+    /**
+     * cardInfo 会员卡信息
+     */
+    @PostMapping("cardInfo")
+    @ResponseBody
+    public Object queryCardInfo(@RequestBody() Map<String, Object> param) {
+
+        log.info(" --- collect cardInfo ---");
+        try {
+
+
+            List<UserCardInfo> cardList = cardService.queryCradInfoByPaging(
+                    Integer.parseInt(param.get("pageNum").toString()),
+                    Integer.parseInt(param.get("pageSize").toString()));
+            // filter type,createDate
+            String cardType = param.get("roleType") == null ? "" : param.get("roleType").toString();
+            String createDate =
+                    param.get("createDate") == null ? "" : param.get("createDate").toString();
+
+            cardList = filterCardInfoByType(cardType, cardList);
+            cardList = filterCardInfoByDate(createDate, cardList);
+            // translate
+            cardList = cardService.transformList(cardList);
+            JSONObject json = new JSONObject();
+            Map<String, Object> cardMap = new HashMap<String, Object>();
+            cardMap.put("data", cardList);
+            json.put("cardList", cardMap);
+            json.put("total", cardList.size());
+            return JsonResponse.success("查询会员卡信息！", json);
+        } catch (Exception e) {
+            log.error("collect cardInfo fail ! ");
+            return JsonResponse.failure(" check all user fail");
+        }
+    }
+
+    /**
+     * filter card by cardType
+     *
+     * @param cardType
+     * @param cardList
+     * @return cardList
+     */
+    private List<UserCardInfo> filterCardInfoByType(String cardType, List<UserCardInfo> cardList) {
+
+        if (StringUtils.isEmpty(cardType)) {
+            return cardList;
+        }
+        return cardList.stream().filter(card -> card.getUser().getUserrole().equals(cardType))
+                .collect(Collectors.toList());
+    }
+
+
+    /**
+     * filter card by createDate
+     *
+     * @param createDate
+     * @param cardList
+     * @return
+     */
+    private List<UserCardInfo> filterCardInfoByDate(String createDate,
+                                                    List<UserCardInfo> cardList) {
+
+        if (StringUtils.isEmpty(createDate)) {
+            return cardList;
+        }
+
+        return cardList.stream().filter(card -> DateUtils.isSameDay(card.getCreatedtime(),
+                new Date(Long.parseLong(createDate)))).collect(Collectors.toList());
+
+    }
+}

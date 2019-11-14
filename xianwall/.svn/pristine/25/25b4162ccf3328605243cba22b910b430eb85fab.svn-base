@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanding.dao.RoleMapper">
+  <resultMap id="BaseResultMap" type="com.wanding.model.Role">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="Role" jdbcType="VARCHAR" property="role" />
+    <result column="Description" jdbcType="VARCHAR" property="description" />
+    <result column="Remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="CreatedTime" jdbcType="TIMESTAMP" property="createdtime" />
+    <result column="UpdatedTime" jdbcType="TIMESTAMP" property="updatedtime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, Role, Description, Remarks, CreatedTime, UpdatedTime
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from role
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from role
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wanding.model.Role">
+    insert into role (ID, Role, Description, 
+      Remarks, CreatedTime, UpdatedTime
+      )
+    values (#{id,jdbcType=INTEGER}, #{role,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{remarks,jdbcType=VARCHAR}, #{createdtime,jdbcType=TIMESTAMP}, #{updatedtime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.wanding.model.Role">
+    insert into role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="role != null">
+        Role,
+      </if>
+      <if test="description != null">
+        Description,
+      </if>
+      <if test="remarks != null">
+        Remarks,
+      </if>
+      <if test="createdtime != null">
+        CreatedTime,
+      </if>
+      <if test="updatedtime != null">
+        UpdatedTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="role != null">
+        #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createdtime != null">
+        #{createdtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedtime != null">
+        #{updatedtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wanding.model.Role">
+    update role
+    <set>
+      <if test="role != null">
+        Role = #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        Description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        Remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createdtime != null">
+        CreatedTime = #{createdtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedtime != null">
+        UpdatedTime = #{updatedtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wanding.model.Role">
+    update role
+    set Role = #{role,jdbcType=VARCHAR},
+      Description = #{description,jdbcType=VARCHAR},
+      Remarks = #{remarks,jdbcType=VARCHAR},
+      CreatedTime = #{createdtime,jdbcType=TIMESTAMP},
+      UpdatedTime = #{updatedtime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  
+  <select id="findAllRoles"  resultMap="BaseResultMap">
+    select  Role,Description ,Remarks  from role 
+  </select>
+  
+  
+  
+  
+  
+</mapper>
